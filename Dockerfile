@@ -3,10 +3,12 @@ FROM --platform=${BUILDPLATFORM} golang:1.23.2-alpine AS base
 
 ARG GIT_COMMIT=unspecified
 ARG BUILD_IMAGE_ID=unspecified
+ARG VERSION=unspecified
 ARG TARGETPLATFORM
 ARG BUILDPLATFORM
 ENV GIT_COMMIT=${GIT_COMMIT}
 ENV BUILD_IMAGE_ID=${BUILD_IMAGE_ID}
+ENV VERSION=${VERSION}
 
 RUN apk add --no-cache curl make
 WORKDIR /app
@@ -15,15 +17,36 @@ WORKDIR /app
 COPY go.mod go.sum ./
 RUN go mod download
 
-RUN echo "I am running on $BUILDPLATFORM, building for $TARGETPLATFORM"
-
 # Now pull in our code
 COPY . .
-RUN mkdir -p /app/bin \
-    && make all
+
+# Set the cross compilation arguments based on the TARGETPLATFORM which is
+#  automatically set by the docker engine.
+RUN case ${TARGETPLATFORM} in \
+        "windows/amd64") GOOS=windows GOARCH=amd64 ;; \
+        "linux/amd64") GOOS=linux GOARCH=amd64  ;; \
+        # arm64 and arm64v8 are equivalent in go and do not require a goarm
+        # https://github.com/golang/go/wiki/GoArm
+        "linux/arm64" | "linux/arm/v8") GOOS=linux GOARCH=arm64  ;; \
+        "linux/ppc64le") GOOS=linux GOARCH=ppc64le  ;; \
+        "linux/s390x") GOOS=linux GOARCH=s390x  ;; \
+        "linux/arm/v6") GOOS=linux GOARCH=arm GOARM=6  ;; \
+        "linux/arm/v7") GOOS=linux GOARCH=arm GOARM=7 ;; \
+    esac && \
+    printf "Building htpasswd-forward-auth for OS: ${GOOS}, Arch: ${GOARCH}\n" && \
+    GOOS=${GOOS} GOARCH=${GOARCH} VERSION=${VERSION} make build_binary
 
 # Final image
 FROM scratch AS final
 LABEL maintainer="Arulraj V <me@arulraj.net>"
-COPY --from=base /app/dist/htpasswd-forward-auth_amd64 /htpasswd-forward-auth
+COPY --from=base /app/dist/htpasswd-forward-auth /htpasswd-forward-auth
+
+LABEL org.opencontainers.image.licenses=MIT \
+      org.opencontainers.image.description="A forward authentication service based on the `.htpasswd` file for reverse proxies." \
+      org.opencontainers.image.documentation=https://arulrajnet.github.io/htpasswd-forward-auth/ \
+      org.opencontainers.image.source=https://github.com/arulrajnet/htpasswd-forward-auth \
+      org.opencontainers.image.url=https://hub.docker.com/repository/docker/arulrajnet/htpasswd-forward-auth \
+      org.opencontainers.image.title=htpasswd-forward-auth \
+      org.opencontainers.image.version=${VERSION}
+
 CMD ["/htpasswd-forward-auth"]
