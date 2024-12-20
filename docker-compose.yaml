@@ -1,0 +1,20 @@
+services:
+
+  htpasswd-forward-auth:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      platforms:
+        - linux/amd64
+        - linux/arm64
+      args:
+        GIT_COMMIT: ${GIT_COMMIT:-unspecified}
+      x-bake:
+        tags:
+        - arulrajnet/htpasswd-forward-auth:dev
+        - arulrajnet/htpasswd-forward-auth:${GIT_COMMIT:-dev}
+        - arulrajnet/htpasswd-forward-auth:${CUSTOM_TAG_NAME:-dev}
+    image: arulrajnet/htpasswd-forward-auth:dev
+    command: /htpasswd-forward-auth
+    environment:
+      LOG_LEVEL: debug
