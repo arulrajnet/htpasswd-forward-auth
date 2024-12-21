@@ -20,8 +20,11 @@ ARCHS=(
   linux-armv7
   linux-ppc64le
   linux-s390x
+  linux-riscv64
   freebsd-amd64
   windows-amd64
+  linux-386
+  windows-386
 )
 
 rm -rf release

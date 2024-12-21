@@ -1,6 +1,6 @@
 module github.com/arulrajnet/htpasswd-forward-auth
 
-go 1.23
+go 1.23.4
 
 require (
 	github.com/fsnotify/fsnotify v1.8.0
