@@ -5,6 +5,7 @@ go 1.23.4
 require (
 	github.com/fsnotify/fsnotify v1.8.0
 	github.com/rs/zerolog v1.33.0
+	github.com/spf13/pflag v1.0.5
 	golang.org/x/crypto v0.31.0
 )
 

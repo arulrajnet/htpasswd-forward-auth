@@ -22,20 +22,20 @@ lint:
 # Build for given platform. The arch and os set outside of the makefile
 .PHONY: $(BINERY)
 $(BINERY): clean
-	CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY) ./cmd/main.go
+	CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/arulrajnet/htpasswd-forward-auth/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY) ./cmd/main.go
 
 # Build for different platforms
 .PHONY: build_linux_amd64
 build_linux_amd64:
-	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY)_amd64 ./cmd/main.go
+	GOOS=linux GOARCH=amd64 CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/arulrajnet/htpasswd-forward-auth/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY)_amd64 ./cmd/main.go
 
 .PHONY: build_linux_arm
 build_linux_arm:
-	GOOS=linux GOARCH=arm CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY)_arm ./cmd/main.go
+	GOOS=linux GOARCH=arm CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/arulrajnet/htpasswd-forward-auth/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY)_arm ./cmd/main.go
 
 .PHONY: build_windows_amd64
 build_windows_amd64:
-	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/oauth2-proxy/oauth2-proxy/v7/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY)_windows.exe ./cmd/main.go
+	GOOS=windows GOARCH=amd64 CGO_ENABLED=0 $(GO_BUILD) -a -installsuffix cgo -ldflags="-X github.com/arulrajnet/htpasswd-forward-auth/pkg/version.VERSION=${VERSION}" -o $(OUTPUT_DIR)/$(BINERY)_windows.exe ./cmd/main.go
 
 # Clean up binaries
 .PHONY: clean
